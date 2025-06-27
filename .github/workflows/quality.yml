@@ -13,3 +13,11 @@ jobs:
       - run: cargo fmt -- --check
       - run: cargo clippy --
       - run: cargo test
+
+  target_branch_check:
+    runs-on: ubuntu-latest
+    if: ${{ startsWith( github.base_ref, 'releases/') && github.head_ref == 'main' || startsWith(github.head_ref, 'bug/') }}
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          comment: "La branche source de la PR doit être `main` ou une branche de bug quand la branche cible est une release."
