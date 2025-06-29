@@ -1,0 +1,70 @@
+name: Check TODOs and Linked Issues
+
+on: [push, pull_request]
+  
+jobs:
+  check-todos:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Search for TODOs
+      id: search_todos
+      run: |
+        echo "Searching for TODOs..."
+
+        todos=$(grep -rn '// TODO' . || true)
+
+        if [[ -z "$todos" ]]; then
+          echo "No TODOs found."
+          exit 0
+        fi
+
+        echo "$todos" > todos.txt
+
+        echo "Found TODOs:"
+        cat todos.txt
+
+        echo "::set-output name=found_todos::true"
+
+    - name: Validate TODOs
+      if: steps.search_todos.outputs.found_todos == 'true'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        failed=0
+
+        while IFS= read -r line; do
+          file=$(echo "$line" | cut -d: -f1)
+          lineno=$(echo "$line" | cut -d: -f2)
+          content=$(echo "$line" | cut -d: -f3-)
+
+          if [[ "$content" =~ TODO\ \(#([0-9]+)\) ]]; then
+            issue_number="${BASH_REMATCH[1]}"
+            echo "Checking issue #$issue_number referenced at $file:$lineno..."
+
+            issue=$(gh issue view "$issue_number" --json state -q .state 2>/dev/null)
+
+            if [[ $? -ne 0 ]]; then
+              echo "Issue #$issue_number does not exist (found at $file:$lineno)."
+              failed=1
+            elif [[ "$issue" != "OPEN" ]]; then
+              echo "Issue #$issue_number is not open (found at $file:$lineno)."
+              failed=1
+            else
+              echo "Issue #$issue_number is valid and open."
+            fi
+          else
+            echo "TODO without issue at $file:$lineno"
+            failed=1
+          fi
+        done < todos.txt
+
+        if [[ $failed -ne 0 ]]; then
+          echo "Some TODOs are invalid."
+          exit 1
+        else
+          echo "All TODOs are valid."
+        fi
