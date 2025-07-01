@@ -24,7 +24,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: make build
 
-      - name: Build documentation
-        run: make manual
-      - name: Check code style
-        run: make check
+  build_documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make manual
+    

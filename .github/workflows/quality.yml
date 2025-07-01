@@ -5,13 +5,21 @@ on: [pull_request]
 
 # JOBS
 jobs:
-  build:
+
+  check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - run: cargo check
       - run: cargo fmt -- --check
-      - run: cargo clippy --
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: cargo clippy -- 
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
       - run: cargo test
 
   target_branch_check:
