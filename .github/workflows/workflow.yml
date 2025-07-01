@@ -13,9 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: target
+          key: ${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+
       - uses: typst-community/setup-typst@v3
       - name: Build avec Makefile
+        if: steps.cache.outputs.cache-hit != 'true'
         run: make build
+
       - name: Build documentation
         run: make manual
       - name: Check code style
