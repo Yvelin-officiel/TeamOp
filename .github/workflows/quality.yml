@@ -9,17 +9,20 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: cargo check
       - run: cargo fmt -- --check
 
   clippy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: cargo clippy -- 
 
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: cargo test
 
   target_branch_check:
