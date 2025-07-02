@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  install_dependencies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,9 +19,15 @@ jobs:
           path: target
           key: ${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build avec Makefile
+      - name: Setup Rust
         if: steps.cache.outputs.cache-hit != 'true'
-        run: make build
+        run: setup rust
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build 
 
   build_documentation:
     runs-on: ubuntu-latest
