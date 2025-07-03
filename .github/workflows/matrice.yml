@@ -1,0 +1,17 @@
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_release:
+    strategy:
+      matrix:
+        version: [1.75.0, 1.80.0, 1.85.0, 1.88.0]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    if: ${{  github.base_ref == 'main' && startsWith(github.head_ref, 'feature/') }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build --release
