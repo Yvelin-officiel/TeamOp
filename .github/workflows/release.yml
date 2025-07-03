@@ -2,11 +2,10 @@ on:
   pull_request:
     branches:
       - release/*
-name: Test the action
 
 jobs:
   main:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Aquire code
         if: always()
