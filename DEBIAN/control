@@ -1,0 +1,9 @@
+Package: sismeis-teamop
+Version: 12.0
+Section: base
+Priority: optional
+Architecture: all
+Depends: bash
+Maintainer: Yvelin-officiel
+Description: Affiche la date dans le terminal
+Homepage: https://github.com/Yvelin-officiel/TeamOp
