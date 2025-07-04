@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 WORKDIR /app
-COPY target/debug/simeis-server.exe /usr/local/bin/simeis-server
+COPY target/release/simeis-server.exe /usr/local/bin/simeis-server
 
 EXPOSE 8080
 
