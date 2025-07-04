@@ -37,12 +37,13 @@ jobs:
             target/release/simeis-server
           clear_attachments: true
 
+      - name: Prepare Debian package structure
+        run: |
+          mkdir -p TeamOp/usr/bin
+          cp target/release/simeis-server TeamOp/usr/bin/
+          cp -r DEBIAN TeamOp/
+
       - name: Create Debian package
         run: |
           dpkg-deb --build TeamOp
 
-      - name: Upload release artefacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: TeamOp-${{ env.GIT_HASH }}.deb
-          path: TeamOp.deb
