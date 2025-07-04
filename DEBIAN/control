@@ -1,8 +1,8 @@
-Package: sismeis-teamop
+Package: simeis-teamop
 Version: 1.0.0
 Section: base
 Priority: optional
 Architecture: all
 Maintainer: Yvelin-officiel
-Description: sismeis TeamOP 
+Description: simeis TeamOP 
 Homepage: https://github.com/Yvelin-officiel/TeamOp
