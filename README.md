@@ -13,3 +13,9 @@ cargo run
 ```
 cargo test
 ```
+
+# Docker
+
+```bash
+docker build -f .github/dockerfile .
+```
