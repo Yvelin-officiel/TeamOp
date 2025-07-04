@@ -44,9 +44,19 @@ jobs:
           name: TeamOp-deb
           path: TeamOp.deb
 
+      - name: Build Docker image
+        run: |
+          docker build -f .github/Dockerfile -t simeis-server:release .
 
+      - name: Save Docker image 
+        run: |
+          docker image save simeis-server:release -o simeis-server-image.tar
 
-
+      - name: Upload Docker image 
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-server-docker-image
+          path: simeis-server-image.tar
 
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
@@ -61,4 +71,5 @@ jobs:
           files: |
             target/release/simeis-server
             TeamOp.deb
+            simeis-server-image.tar
           clear_attachments: true
