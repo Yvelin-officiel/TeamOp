@@ -15,6 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Prepare Debian package structure
+        run: |
+          mkdir -p TeamOp/usr/bin
+          cp target/release/simeis-server TeamOp/usr/bin/
+          cp -r DEBIAN TeamOp/
+
+          chmod 755 TeamOp/DEBIAN/preinst
+          chmod 755 TeamOp/DEBIAN/postinst
+
+      - name: Create Debian package
+        run: |
+          dpkg-deb --build TeamOp TeamOp.deb
+
+      - name: upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamOp-deb
+          path: TeamOp.deb
+
       - name: Put commit hash/name in env variables
         run: |
           echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
@@ -35,23 +55,5 @@ jobs:
             ${{ env.GIT_MESSAGE }}
           files: |
             target/release/simeis-server
+            TeamOp.deb
           clear_attachments: true
-
-      - name: Prepare Debian package structure
-        run: |
-          mkdir -p TeamOp/usr/bin
-          cp target/release/simeis-server TeamOp/usr/bin/
-          cp -r DEBIAN TeamOp/
-
-          chmod 755 TeamOp/DEBIAN/preinst
-          chmod 755 TeamOp/DEBIAN/postinst
-
-      - name: Create Debian package
-        run: |
-          dpkg-deb --build TeamOp TeamOp.deb
-
-      - name: upload Debian package
-        uses: actions/upload-artifact@v4
-        with:
-          name: TeamOp-deb
-          path: TeamOp.deb
