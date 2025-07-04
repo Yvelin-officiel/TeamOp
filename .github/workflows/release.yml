@@ -43,10 +43,15 @@ jobs:
           cp target/release/simeis-server TeamOp/usr/bin/
           cp -r DEBIAN TeamOp/
 
-          chmod 755 DEBIAN/preinst
-          chmod 755 DEBIAN/postinst
+          chmod 755 TeamOp/DEBIAN/preinst
+          chmod 755 TeamOp/DEBIAN/postinst
 
       - name: Create Debian package
         run: |
           dpkg-deb --build TeamOp
 
+      - name: upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamOp-deb
+          path: TeamOp.deb
