@@ -28,7 +28,7 @@ jobs:
           - name: Install man page
             run: |
              sudo install -Dm644 ./manpage.1 /usr/share/man/manpage.1
-             sudo gzip -f /usr/share/man/man1/manpage.1
+             sudo gzip -f /usr/share/man/manpage.1
 
           - name: Install systemd service
             run: |
