@@ -39,7 +39,7 @@ jobs:
 
       - name: Create Debian package
         run: |
-          dkpg-deb --build TeamOp
+          dpkg-deb --build TeamOp
 
       - name: Upload release artefacts
         uses: actions/upload-artifact@v4
