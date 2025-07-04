@@ -1,39 +1,64 @@
+name: Release on PR to release branch
 on:
   pull_request:
     branches:
+    - release/*
+  push:
+    branches:
       - release/*
-name: Test the action
+
+permissions:
+  contents: write
 
 jobs:
   main:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Aquire code
-        if: always()
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Put commit hash/name in env variables
         run: |
           echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
           echo "GIT_MESSAGE<<EOF" >> $GITHUB_ENV
           git log -1 --pretty=%B >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-    #
-    # Some steps that compile code
-    # would go here
-    #
+      - name: Build release
+        run: cargo build --release
+
+      - name: Prepare Debian package structure
+        run: |
+          mkdir -p TeamOp/usr/bin
+          cp target/release/simeis-server TeamOp/usr/bin/
+          cp -r DEBIAN TeamOp/
+
+          chmod 755 TeamOp/DEBIAN/preinst
+          chmod 755 TeamOp/DEBIAN/postinst
+
+      - name: Create Debian package
+        run: |
+          dpkg-deb --build TeamOp TeamOp.deb
+
+      - name: upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamOp-deb
+          path: TeamOp.deb
+
+
+
+
+
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "latest"
+          tag: ${{ env.GIT_HASH }}
           prerelease: true
-          name: "Latest Commit, that compiles"
+          name: "Commit ${{ env.GIT_HASH }}"
           body: |
-            This automatic prerelease is built from commit ${{ env.GIT_HASH }} and was triggered by @${{ github.actor }}
-            [Github Actions workflow run that built this prerelease](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            Commit message:
+            Built from commit ${{ env.GIT_HASH }} by @${{ github.actor }}
             ${{ env.GIT_MESSAGE }}
           files: |
-            build/*.exe
+            target/release/simeis-server
+            TeamOp.deb
           clear_attachments: true

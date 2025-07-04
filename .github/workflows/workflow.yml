@@ -18,10 +18,7 @@ jobs:
         with:
           path: target
           key: ${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Setup Rust
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: setup rust
+    # Pas de dépendences pour l'instant
 
   build:
     runs-on: ubuntu-latest
