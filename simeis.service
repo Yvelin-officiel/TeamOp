@@ -1,0 +1,14 @@
+[Unit]
+Description=Simeis service par TeamOp
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=user
+ExecStart=/usr/local/bin/simeis-server
+
+[Install]
+WantedBy=multi-user.target
