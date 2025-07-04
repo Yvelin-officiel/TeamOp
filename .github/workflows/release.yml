@@ -71,4 +71,5 @@ jobs:
           files: |
             target/release/simeis-server
             TeamOp.deb
+            simeis-server-image.tar
           clear_attachments: true
