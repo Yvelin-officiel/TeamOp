@@ -36,3 +36,13 @@ jobs:
           files: |
             target/release/simeis-server
           clear_attachments: true
+
+      - name: Create Debian package
+        run: |
+          dkpg-deb --build TeamOp
+
+      - name: Upload release artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamOp-${{ env.GIT_HASH }}.deb
+          path: TeamOp.deb
