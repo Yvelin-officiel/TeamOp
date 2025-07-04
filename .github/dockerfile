@@ -1,12 +1,7 @@
-FROM rust:1.85.0-bookworm AS builder
-
-WORKDIR /app
-COPY . .
-
-RUN cargo build --release
-
 FROM debian:bookworm-slim
 WORKDIR /app
-COPY --from=builder /app/target/release/simeis-server /usr/local/bin/simeis-server
+COPY target/debug/simeis-server.exe /usr/local/bin/simeis-server
+
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/local/bin/simeis-server"]
