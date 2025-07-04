@@ -1,0 +1,42 @@
+name: Deploy to debian
+
+on:
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+      
+          - name: Creation d'un utilisateur
+            run: |
+             sudo useradd --system --no-create-home --shell /usr/sbin/nologin simeis || true
+             sudo usermod -aG sudo simeis
+
+          - name: Build projet
+            run: cargo build --release 
+
+          - name: Install binaire Simeis
+            run: |
+             sudo cp target/release/simeis-server /usr/local/bin/
+             sudo chown root:simeis /usr/local/bin/simeis-server
+
+          - name: Install man page
+            run: |
+             sudo install -Dm644 ./manpage.1 /usr/share/man/manpage.1
+             sudo gzip -f /usr/share/man/man1/manpage.1
+
+          - name: Install systemd service
+            run: |
+             sudo install -Dm644 ./simeis.service /etc/systemd/system/simeis.service
+
+          - name: Start service
+            run: |
+             sudo systemctl daemon-reload
+             sudo systemctl enable simeis.service
+             sudo systemctl start simeis.service
+           
