@@ -48,7 +48,7 @@ jobs:
 
       - name: Create Debian package
         run: |
-          dpkg-deb --build TeamOp
+          dpkg-deb --build TeamOp TeamOp.deb
 
       - name: upload Debian package
         uses: actions/upload-artifact@v4
