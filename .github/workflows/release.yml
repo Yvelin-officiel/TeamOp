@@ -31,17 +31,17 @@ jobs:
 
       - name: Prepare Debian package structure
         run: |
-          mkdir -p TeamOp/usr/bin
+          mkdir -p teamop/usr/bin
           mv target/release/simeis-server target/release/teamop-server
-          cp target/release/teamop-server TeamOp/usr/bin/
+          cp target/release/teamop-server teamop/usr/bin/
           cp -r DEBIAN teamop/
 
-          chmod 755 TeamOp/DEBIAN/preinst
-          chmod 755 TeamOp/DEBIAN/postinst
+          chmod 755 teamop/DEBIAN/preinst
+          chmod 755 teamop/DEBIAN/postinst
 
       - name: Create Debian package
         run: |
-          dpkg-deb --build TeamOp teamop-${GIT_HASH}.deb
+          dpkg-deb --build teamop teamop-${GIT_HASH}.deb
 
       - name: upload Debian package
         uses: actions/upload-artifact@v4
@@ -74,7 +74,7 @@ jobs:
             Built from commit ${{ env.GIT_HASH }} by @${{ github.actor }}
             ${{ env.GIT_MESSAGE }}
           files: |
-            target/release/TeamOp-server
+            target/release/teamop-server
             teamop-${{ env.GIT_HASH }}.deb
             simeis-server-image.tar
           clear_attachments: true
