@@ -9,8 +9,10 @@ pub type GameState = ntex::web::types::State<Game>;
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
+    std::env::set_var("RUST_LOG", "info");
+
     #[cfg(not(feature = "testing"))]
-    let port = 8080;
+    let port = 0808;
 
     #[cfg(feature = "testing")]
     let port = 9345;
@@ -31,7 +33,7 @@ async fn main() -> std::io::Result<()> {
         web::App::new()
             .wrap(web::middleware::Logger::default())
             .state(state.clone())
-            .configure(|srv| api::configure(srv))
+            .configure(api::configure)
     })
     .stop_runtime()
     .bind(("0.0.0.0", port))?
