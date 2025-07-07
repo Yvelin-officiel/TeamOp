@@ -74,7 +74,7 @@ jobs:
             ${{ env.GIT_MESSAGE }}
           files: |
             target/release/simeis-server
-            TeamOp.deb
+            TeamOp-${{ env.GIT_HASH }}.deb
             simeis-server-image.tar
           clear_attachments: true
 
