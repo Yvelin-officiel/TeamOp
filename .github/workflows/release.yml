@@ -32,7 +32,7 @@ jobs:
       - name: Prepare Debian package structure
         run: |
           mkdir -p TeamOp/usr/bin
-          cp target/release/simeis-server TeamOp/usr/bin/
+          cp target/release/TeamOp-server TeamOp/usr/bin/
           cp -r DEBIAN TeamOp/
 
           chmod 755 TeamOp/DEBIAN/preinst
