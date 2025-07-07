@@ -1,0 +1,7 @@
+FROM debian:bookworm-slim
+WORKDIR /app
+COPY target/release/teamop-server /usr/local/bin/teamop-server
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/simeis-server"]
