@@ -1,5 +1,6 @@
 PORT = 8080
 URL = f"http://127.0.0.1:{PORT}"
+#URL = f"http://103.45.247.164:{PORT}"
 
 import os
 import sys
@@ -49,7 +50,7 @@ class Game:
             ])
 
         qry = f"{URL}{path}{tail}"
-        reply = urllib.request.urlopen(qry, timeout=1)
+        reply = urllib.request.urlopen(qry, timeout=20)
 
         data = json.loads(reply.read().decode())
         err = data.pop("error")
@@ -326,11 +327,23 @@ class Game:
                 except SimeisError as e:
                     print(f"[!] Impossible d'appliquer l'amélioration : {e}")
 
+    def check_ship_cargo_upgrade(self):
+        upgradelist = self.get(f"/station/{self.sta}/shipyard/upgrade")
+        status = game.get(f"/player/{game.pid}")
+
+        money = status['money']
+        price = upgradelist['CargoExpansion']['price']
+
+        if money >= price * 2.2:
+            self.get(f"/station/{self.sta}/shipyard/upgrade/{self.sid}/CargoExpansion")
+            print(f"[*] Amélioration du cargo pour {price} credits")
+            self.disp_status()
+
+
     def ensure_ship_docked(self):
         ship = self.get(f"/ship/{self.sid}")
         station = self.get(f"/station/{self.sta}")
         return ship["position"] == station["position"]
-
 
 if __name__ == "__main__":
     name = sys.argv[1]
@@ -340,8 +353,9 @@ if __name__ == "__main__":
     while True:
         print("")
         game.disp_status()
-        if game.ensure_ship_docked():
-            game.check_crew_upgrade()
         game.go_mine()
         game.disp_status()
         game.go_sell()
+        if game.ensure_ship_docked():
+            game.check_crew_upgrade()
+            game.check_ship_cargo_upgrade()
