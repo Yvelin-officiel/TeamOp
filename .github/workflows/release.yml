@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir -p TeamOp/usr/bin
           mv target/release/simeis-server target/release/teamop-server
-          cp target/release/teamop-server teamop/usr/bin/
+          cp target/release/teamop-server TeamOp/usr/bin/
           cp -r DEBIAN teamop/
 
           chmod 755 TeamOp/DEBIAN/preinst
