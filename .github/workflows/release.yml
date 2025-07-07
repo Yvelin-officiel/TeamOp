@@ -76,7 +76,7 @@ jobs:
           files: |
             target/release/teamop-server
             teamop-${{ env.GIT_HASH }}.deb
-            simeis-server-image.tar
+            teamop-server-image.tar
           clear_attachments: true
 
   # docker:
