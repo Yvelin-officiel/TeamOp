@@ -32,6 +32,7 @@ jobs:
       - name: Prepare Debian package structure
         run: |
           mkdir -p TeamOp/usr/bin
+          mv target/release/simeis-server target/release/TeamOp-server
           cp target/release/TeamOp-server TeamOp/usr/bin/
           cp -r DEBIAN TeamOp/
 
