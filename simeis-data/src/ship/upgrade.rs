@@ -3,7 +3,7 @@ use strum::{EnumIter, EnumString, IntoStaticStr};
 
 use super::{Ship, CARGO_CAP_PRICE, HULL_DECAY_CAP_PRICE, REACTOR_POWER_PRICE, SHIELD_PRICE};
 
-const CARGO_EXP_ADD_CAP: f64 = 100.0;
+const CARGO_EXP_ADD_CAP: f64 = 150.0;
 const REACTOR_UPG_ADD: u16 = 1;
 const HULL_UPG_ADD: f64 = 100.0;
 const SHIELD_UPG_ADD: u16 = 1;
@@ -62,7 +62,7 @@ impl ShipUpgrade {
             ShipUpgrade::HullUpgrade => {
                 format!("Increase the hull decay capacity by {HULL_UPG_ADD}")
             }
-            ShipUpgrade::Shield => format!("Reduce the damage and usure of the hull"),
+            ShipUpgrade::Shield => "Reduce the damage and usure of the hull".to_string(),
         }
     }
 }
