@@ -1,6 +1,6 @@
-PORT = 8080
+PORT = 8808
 URL = f"http://127.0.0.1:{PORT}"
-#URL = f"http://103.45.247.164:{PORT}"
+# URL = f"http://103.45.247.164:{PORT}"
 
 import os
 import sys
@@ -312,10 +312,11 @@ class Game:
         print(f"    - Usure de la coque : {cost['hull_usage']}")
         return cost
 
-    def check_crew_upgrade(self):
+    def check_crew_upgrades(self):
         upgradelist = self.get(f"/station/{self.sta}/crew/upgrade/ship/{self.sid}")
         status = game.get("/player/" + str(game.pid))
         for crew_id, crew_info in upgradelist.items():
+            print(f"Liste des amélioration disponible pour l'équipage {crew_id} | {crew_info}")
             if crew_info['member-type'] == 'Operator' and int(status["money"]) > (int(crew_info['price']) * 1.5):
                 print(f"[] Amélioration disponible pour l'opérateur:")
                 print(f"\t- ID: {crew_id}")
@@ -327,17 +328,48 @@ class Game:
                 except SimeisError as e:
                     print(f"[!] Impossible d'appliquer l'amélioration : {e}")
 
-    def check_ship_cargo_upgrade(self):
+            if crew_info['member-type'] == 'Pilot' and int(status["money"]) > (int(crew_info['price']) * 1.5):
+                print(f"[] Amélioration disponible pour le pilote:")
+                print(f"\t- ID: {crew_id}")
+                print(f"\t- Prix: {crew_info['price']} crédits")
+                print(f"\t- Rang: {crew_info['rank']}")
+                try:
+                    result = self.get(f"/station/{self.sta}/crew/upgrade/ship/{self.sid}/{crew_id}")
+                    print(f"[*] Amélioration appliquée avec succès : {result}")
+                except SimeisError as e:
+                    print(f"[!] Impossible d'appliquer l'amélioration : {e}")
+
+    def check_trader_upgrade(self):
+        upgradelist = self.get(f"/station/{self.sta}/upgrades")
+        status = game.get(f"/player/{game.pid}")
+
+        print(f"Liste des amélioration disponible pour la station {upgradelist}")
+        
+        if int (status['money']) > int (upgradelist['trader-upgrade']) * 2:
+            self.get(f"/station/{self.sta}/crew/upgrade/trader")
+            print(f"Trader amélioré pour {int (upgradelist['trader-upgrade'])}")
+
+    def check_ship_upgrades(self):
         upgradelist = self.get(f"/station/{self.sta}/shipyard/upgrade")
         status = game.get(f"/player/{game.pid}")
 
-        money = status['money']
-        price = upgradelist['CargoExpansion']['price']
+        for upgrade, details in upgradelist.items():
+                
+            if upgrade == "CargoExpansion":
+                print(f"Amélioration disponible: {upgrade} | Prix: {details}")
+                
+                if int (status['money']) >= int  (details['price']) * 2.2:
+                    self.get(f"/station/{self.sta}/shipyard/upgrade/{self.sid}/CargoExpansion")
+                    print(f"[*] Amélioration du cargo pour {details['price']} credits")
+                    self.disp_status()
 
-        if money >= price * 2.2:
-            self.get(f"/station/{self.sta}/shipyard/upgrade/{self.sid}/CargoExpansion")
-            print(f"[*] Amélioration du cargo pour {price} credits")
-            self.disp_status()
+            if upgrade == "ReactorUpgrade":
+                print(f"Amélioration disponible: {upgrade} | Prix: {details}")
+
+                if int (status['money']) >= int  (details['price']) * 2.2:
+                    self.get(f"/station/{self.sta}/shipyard/upgrade/{self.sid}/CargoExpansion")
+                    print(f"[*] Amélioration du reacteur pour {details['price']} credits")
+                    self.disp_status()
 
 
     def ensure_ship_docked(self):
@@ -357,5 +389,6 @@ if __name__ == "__main__":
         game.disp_status()
         game.go_sell()
         if game.ensure_ship_docked():
-            game.check_crew_upgrade()
-            game.check_ship_cargo_upgrade()
+            game.check_crew_upgrades()
+            game.check_ship_upgrades()
+            game.check_trader_upgrade()
